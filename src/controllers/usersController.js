@@ -75,9 +75,20 @@ export const deleteUser = async (req, res) => {
   const userId = Number(id)
   const { email, senha } = req.body
 
-  if (email || senha) {
-    try {
-        
+  try {
+    const user = await prisma.user.delete({
+      where: {
+        id: userId,
+      },
+    })
+    return res.status(200).json('Usuario deletado com sucesso!')
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2025'
+    ) {
+      return res.status(404).json({ error: 'Usuário não encontrado' })
     }
+    return res.status(500).json({ error: 'Falha ao deletar usuario' })
   }
 }
