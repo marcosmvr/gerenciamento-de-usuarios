@@ -95,3 +95,23 @@ export const deleteUser = async (req, res) => {
     return res.status(500).json({ error: 'Falha ao deletar usuario' })
   }
 }
+
+export const loginUser = async (req, res) => {
+  console.log('Funcionando rota de login de usuario')
+  const { email, senha } = req.body
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    })
+
+    if (user && (await bcrypt.compare(senha, user.senha))) {
+      const { senha: _, ...userSemSenha } = user
+      return res.status(200).json({ message: 'Login realizado com sucesso!' })
+    } else {
+      return res.status(401).json({ error: 'Credenciais Invalidas' })
+    }
+  } catch (error) {
+    return res.status(500).json({ error: 'Erro no login' })
+  }
+}
