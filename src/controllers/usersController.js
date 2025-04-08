@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 import prisma from '../../prisma/prismaClient.js'
+import bcrypt from 'bcrypt'
 
 export const createUser = async (req, res) => {
   console.log('Funcionando rota de criar usuarios')
@@ -12,10 +13,12 @@ export const createUser = async (req, res) => {
   }
 
   try {
+    const hashedPassword = await bcrypt.hash(senha, 10)
+
     const user = await prisma.user.create({
       data: {
         email,
-        senha,
+        senha: hashedPassword,
       },
     })
     return res.status(201).json(user)
