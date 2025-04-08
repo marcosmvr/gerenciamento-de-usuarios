@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 import prisma from '../../prisma/prismaClient.js'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 export const createUser = async (req, res) => {
   console.log('Funcionando rota de criar usuarios')
@@ -84,7 +85,7 @@ export const deleteUser = async (req, res) => {
         id: userId,
       },
     })
-    return res.status(200).json('Usuario deletado com sucesso!')
+    return res.status(200).json({ message: 'Usuario deletado com sucesso!' })
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -106,8 +107,13 @@ export const loginUser = async (req, res) => {
     })
 
     if (user && (await bcrypt.compare(senha, user.senha))) {
+      const token = jwt.sign(
+        { id: user.id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' },
+      )
       const { senha: _, ...userSemSenha } = user
-      return res.status(200).json({ message: 'Login realizado com sucesso!' })
+      return res.status(200).json({ user: userSemSenha, token })
     } else {
       return res.status(401).json({ error: 'Credenciais Invalidas' })
     }
