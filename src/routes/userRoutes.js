@@ -8,7 +8,7 @@ import {
   loginUser
 } from '../controllers/usersController.js'
 
-router.post('/users', createUser)
+router.post('/users', createUser
 router.post('/login', loginUser)
 router.put('/users/:id', updateUser)
 router.get('/users', getUser)
