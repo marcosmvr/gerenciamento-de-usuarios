@@ -57,3 +57,27 @@ export const updateUser = async (req, res) => {
       .json({ error: 'Dados insuficientes para atualização' })
   }
 }
+
+export const getUser = async (req, res) => {
+  console.log('Funcionando rota de listar usuarios')
+
+  try {
+    const users = await prisma.user.findMany()
+    return res.status(200).json(users)
+  } catch (error) {
+    return res.status(500).json({ error: 'Falha ao listar usuarios' })
+  }
+}
+
+export const deleteUser = async (req, res) => {
+  console.log('Funcionando rota de deletar usuarios')
+  const { id } = req.params
+  const userId = Number(id)
+  const { email, senha } = req.body
+
+  if (email || senha) {
+    try {
+        
+    }
+  }
+}
